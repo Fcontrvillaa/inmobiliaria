@@ -1,6 +1,8 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _  #textchoices
-from django.contrib.auth.models import User
+#from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
+from django.conf import settings
 import uuid
 
 
@@ -30,7 +32,7 @@ class Inmueble(models.Model):
         depto = "DEPARTAMENTO", _("Departamento")
         parcela = "PARCELA", _("Parcela")
 
-    propietario = models.ForeignKey(User, on_delete=models.CASCADE, related_name="propietario")
+    propietario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="propietario")
     nombre = models.CharField(max_length=100)
     descripcion = models.TextField()
     m2_construidos = models.FloatField(default=0)
@@ -58,7 +60,7 @@ class SolicitudArriendo(models.Model):
         rechazada = "RECHAZADA", _("Rechazada")
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     inmueble = models.ForeignKey(Inmueble, on_delete=models.CASCADE, related_name="solicitudes")
-    arrendatario = models.ForeignKey(User, on_delete=models.CASCADE, related_name="solicitudes_enviadas")
+    arrendatario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="solicitudes_enviadas")
     mensaje = models.TextField()
     estado = models.CharField(max_length=10, choices=EstadoSolicitud.choices, default=EstadoSolicitud.pendiente)
     creado = models.DateTimeField(auto_now_add=True)
@@ -68,16 +70,16 @@ class SolicitudArriendo(models.Model):
         return f"propietario: {self.uuid}, {self.inmueble}  {self.estado}"
 
 
-class PerfilUser(models.Model):
+class PerfilUser(AbstractUser):
     
     class TipoUsuario(models.TextChoices):
         arrendatario = "ARRENDATARIO", _("Arrendatario")
         arrendador = "ARRENDADOR", _("Arrendador")
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile", unique=True)
+   
     tipo_usuario = models.CharField(max_length=13, choices=TipoUsuario.choices, default=TipoUsuario.arrendatario)
     rut = models.CharField(max_length=15, unique=True, blank=True, null=True)
 
-    USERNAME_FIELD = "user"
+    
 
     def __str__(self):
-        return f"{self.user.get_full_name()} -- {self.tipo_usuario}"
+        return f"{self.get_full_name()} -- {self.tipo_usuario}"

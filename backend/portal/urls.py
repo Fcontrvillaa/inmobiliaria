@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import *
 
-app_name = "inmuebles"
+
 
 urlpatterns = [
   path("listar_regiones/", RegionListView.as_view(), name="region_list"),

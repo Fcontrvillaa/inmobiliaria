@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista  de regiones</title>
+</head>
+<body>
+    LISTA Regiones
+
+    {% for r in regiones %}
+        {{r.nro_region}}
+        {{r.nombre}}
+    
+    {% endfor %}
+
+</body>
+</html>

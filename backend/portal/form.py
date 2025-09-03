@@ -1,5 +1,7 @@
 from django import forms
 from .models import *
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.models import User
 
 
 
@@ -22,6 +24,7 @@ class InmuebleForm(forms.ModelForm):
         fields = [
             "nombre",
             "descripcion",
+            "imagen",
             "m2_construidos",
             "m2_totales",
             "estacionamientos",
@@ -50,3 +53,25 @@ class PerfilUserForm(forms.ModelForm):
         model = PerfilUser
         fields = ["tipo_usuario", "rut", "password"] 
     
+
+
+#################################################
+
+class RegisterForm(UserCreationForm):
+    email = forms.EmailField(required=True)
+    class Meta:
+        model = PerfilUser
+        fields = [
+            "username",
+            "first_name",
+            "last_name",
+            "email",
+            "rut",
+            "imagen",
+            "tipo_usuario",
+            "password1",
+            "password2",
+        ]
+class LoginForm(AuthenticationForm):
+    username = forms.CharField(label="Usuario")
+    password = forms.CharField(label="Contraseña", widget=forms.PasswordInput)

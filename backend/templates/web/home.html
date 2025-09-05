@@ -43,13 +43,13 @@
     .card-price {
       font-size: 1.25rem;
       font-weight: bold;
-      color: #0d6efd;
+      color: #052e6a;
     }
     
     .card {
       transform: scale(0.9);
       /* Asegura que la tarjeta sea opaca si el fondo es claro y queremos contraste */
-      background-color: rgba(255, 255, 255, 0.9); /* Ligeramente transparente para ver el fondo */
+      background-color: rgba(248, 255, 255, 0.9); /* Ligeramente transparente para ver el fondo */
     }
 
     .card-img-container {
@@ -100,52 +100,80 @@
 </head>
 <body>
 
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container">
-      <a class="navbar-brand fw-bold" href="#">Inmobiliaria Conecta</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto me-3">
-          <li class="nav-item"><a class="nav-link active" href="#">Inicio</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">Propiedades</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">Arrendadores</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">Arrendatarios</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">Contacto</a></li>
-        </ul>
-        <div class="d-flex align-items-center"> {# Usamos d-flex y align-items-center para alinear verticalmente #}
-              {% if user.is_authenticated %}
-                  {# Nombre de usuario con estilo de texto de navbar y margen a la derecha #}
-                  <span class="navbar-text me-2">
-                      Bienvenido, {{ user.username }}
-                  </span>
-                  
-                  {# Formulario de Salir como un elemento en línea con margen a la derecha #}
-                  <form action="{% url 'logout'%}" method="post" class="d-inline-block">
-                      {% csrf_token %}
-                      {# Botón de Salir con estilo de enlace y sin padding #}
-                      <button type="submit" class="btn btn-dark btn-sm">Salir</button>
-                  </form>
-              {% else %}
-                  {# Botones de INICIAR SESIÓN / REGISTRARSE #}
-                  <div class="d-flex justify-content-end align-items-center gap-2"> {# Usamos gap-2 para espaciar los botones #}
-                      <a href="{% url 'login'%}" class="btn  btn-dark btn-sm">Iniciar Sesión</a>
-                      <a href="{% url 'register'%}" class="btn btn-dark btn-sm">Registrarse</a>
-                  </div>
-              {% endif %}
-          </div>
-      </div>
-    </div>
-  </nav>
+     <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+        <a class="navbar-brand fw-bold" href="#">Inmobiliaria Conecta</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto me-3">
+            <li class="nav-item"><a class="nav-link active" href="{% url 'home' %}">Inicio</a></li>
+            <li class="nav-item"><a class="nav-link" href="#propiedades">Propiedades</a></li>
+            <!-- 
+            <li class="nav-item"><a class="nav-link" href="{% url 'perfil' %}">Arrendadores</a></li>-->
+            <li class="nav-item"><a class="nav-link" href="{% url 'perfil' %}">Perfil</a></li> 
+            
+            <li class="nav-item"><a class="nav-link" href="#">Contacto</a></li>
+            
+            </ul>
+            
+            
+        </div>
+        {% if user.is_authenticated %}
+            <p class="text-white my-auto mb-0">
+                Bienvenido, {{ user.get_full_name|default:user.username }}
+                
+                <a href="{% url 'logout' %}" class="btn btn-sm btn-outline-light ms-2">Logout</a>
+                
+            </p>
+        {% else %}
+            <!-- Botón que abre el modal -->
+            <p class="text-white my-auto mb-0">Hola, visitante. <button class="btn btn-sm btn-outline-light ms-2" data-bs-toggle="modal" data-bs-target="#loginModal">Login</button></p>
+        {% endif %}
+        </div>
+    </nav>
+
+  
+
+
+
 
   <section class="hero">
     <div class="hero-content">
       <h1 class="fw-bold display-4">Encuentra tu próximo hogar</h1>
       <p class="lead">Conecta arrendadores y arrendatarios fácilmente</p>
-      <a href="#propiedades" class="btn btn-primary btn-lg">Ver Propiedades</a>
+      <a href="#propiedades" class="btn btn-secondary btn-lg">Ver Propiedades</a>
     </div>
   </section>
+
+  <section class="py-5 bg-light text-center">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="p-4 rounded-3 border">
+                    <h4 class="fw-bold text-primary">Arriendo fácil</h4>
+                    <p class="text-muted">Publica tu propiedad y encuentra arrendatarios en minutos.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-4 rounded-3 border">
+                    <h4 class="fw-bold text-primary">Administración sin estrés</h4>
+                    <p class="text-muted">Gestiona propiedades y solicitudes desde nuestra plataforma.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-4 rounded-3 border">
+                    <h4 class="fw-bold text-primary">Soporte 24/7</h4>
+                    <p class="text-muted">Nuestro equipo de expertos está siempre disponible para ayudarte.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+  </section>
+
+
 
   <section id="propiedades" class="py-5">
     <div class="container">
@@ -160,7 +188,7 @@
               </div>
               <div class="card-body">
                 <h5 class="card-title">{{i.nombre}}</h5>
-                <p class="card-text">Hermoso departamento con excelente ubicación y vista panorámica.</p>
+                <p class="card-text">{{i.descripcion}}</p>
                 <ul class="list-unstyled small">
                   <li><strong>Construidos:</strong> {{i.m2_construidos}} m²</li>
                   <li><strong>Totales:</strong> {{i.m2_totales}} m²</li>
@@ -169,7 +197,7 @@
                   <li><strong>Estacionamiento:</strong> {{i.estacionamientos}}</li>
                 </ul>
                 <p class="card-price">${{i.precio_mensual}} / mes</p>
-                <a href="#" class="btn btn-outline-primary w-100">Solicitar Arrendamiento</a>
+                <a href="{% url 'solicitud_create_for_inmueble' inmueble_pk=i.id %}" class="btn btn-outline-primary w-100">Solicitar Arrendamiento</a>
               </div>
             </div>
           </div>
@@ -192,13 +220,13 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
         </div>
         <div class="modal-body">
-          <form method="post" action="{% url 'login' %}">  ####
+          <form method="post" action="{% url 'login' %}"> 
             {% csrf_token %}
             
             {# Si usas tu LoginForm de Django #}
             <div class="mb-3">
                 <label for="id_username" class="form-label">Usuario</label>
-                <input type="text" name="username" class="form-control" id="id_username" required>  ##id
+                <input type="text" name="username" class="form-control" id="id_username" required> 
             </div>
             <div class="mb-3">
                 <label for="id_password" class="form-label">Contraseña</label>
@@ -214,7 +242,7 @@
           </form>
         </div>
         <div class="modal-footer">
-          <small class="text-muted">¿No tienes cuenta? <a href="#">Regístrate</a></small>
+          <small class="text-muted">¿No tienes cuenta? <a href="{% url 'register' %}">Regístrate</a></small>
         </div>
       </div>
     </div>

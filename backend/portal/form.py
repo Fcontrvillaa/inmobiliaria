@@ -41,11 +41,8 @@ class SolicitudArriendoForm(forms.ModelForm):
     class Meta:
         model = SolicitudArriendo
         fields = [
-            "inmueble",
-            "arrendatario",
             "mensaje",
-            "estado"
-            
+                       
         ]
 
 class PerfilUserForm(forms.ModelForm):
@@ -59,6 +56,7 @@ class PerfilUserForm(forms.ModelForm):
 
 class RegisterForm(UserCreationForm):
     email = forms.EmailField(required=True)
+    
     class Meta:
         model = PerfilUser
         fields = [

@@ -6,9 +6,12 @@
     <title>Document</title>
 </head>
 <body>
-    Solicitud
-
-   
-
+    {% for s in solicitudes %}
+        <div>
+            <p>{{s.nombre}}</p>
+            <p>{{s.id}}</p> 
+        </div>
+    {% endfor %}
+    
 </body>
 </html>

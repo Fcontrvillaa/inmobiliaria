@@ -1,11 +1,9 @@
 from django.urls import path
+from .views import register_view, login_view, logout_view
 from .views import *
 
 
-
-urlpatterns = [
-    
-  path("", InmueblesListView.as_view(), name="home"),
+urlpatterns = [  
   
 
   path("listar_regiones/", RegionListView.as_view(), name="region_list"),
@@ -16,23 +14,26 @@ urlpatterns = [
   
   path("listar_comunas/", ComunaListView.as_view(), name="comuna_list"),
   path("crear_comuna/", ComunaCreateView.as_view(), name="comuna_create"),
-  path("actualizar_comuna/<int:pk>", ComunaUpdateView.as_view(), name="comuna_update"),
-  path("borrar_comuna/<int:pk>", ComunaDeleteView.as_view(), name="comuna_delete"),
+  path("actualizar_comuna/<int:pk>/", ComunaUpdateView.as_view(), name="comuna_update"),
+  path("borrar_comuna/<int:pk>/", ComunaDeleteView.as_view(), name="comuna_delete"),
   
-  
+  path("", InmueblesListView.as_view(), name="home"),
   #path("listar_inmuebles/", InmueblesListView.as_view(), name="inmueble_list"),
+  path("inmueble/<int:pk>/", InmuebleDetailView.as_view(), name="inmueble_detail"),
   path("crear_inmueble/", InmuebleCreateView.as_view(), name="inmueble_create"),
-  path("actualizar_inmueble/<int:pk>", InmuebleUpdateView.as_view(), name="inmueble_update"),
-  path("borrar_inmueble/<int:pk>", InmuebleDeleteView.as_view(), name="inmueble_delete"),
+  path("actualizar_inmueble/<int:pk>/", InmuebleUpdateView.as_view(), name="inmueble_update"),
+  path("borrar_inmueble/<int:pk>/", InmuebleDeleteView.as_view(), name="inmueble_delete"),
   
   
   path("listar_solicitudes/", SolicitudArriendoListView.as_view(), name="solicitud_list"),
   path("crear_solicitud/", SolicitudArriendoCreateView.as_view(), name="solicitud_create"),
-  path("actualizar_solicitud/<int:pk>",SolicitudArriendoUpdateView.as_view(), name="solicitud_update"),
-  path("borrar_solicitud/<int:pk>",SolicitudArriendoDeleteView.as_view(), name="solicitud_delete"),
+  path("actualizar_solicitud/<int:pk>/",SolicitudArriendoUpdateView.as_view(), name="solicitud_update"),
+  path("borrar_solicitud/<int:pk>/",SolicitudArriendoDeleteView.as_view(), name="solicitud_delete"),
+  path("solicitudes/nueva/<int:inmueble_pk>/",SolicitudArriendoCreateView.as_view(), name="solicitud_create_for_inmueble"),
   
   
-  path("actualizar_perfil/<int:pk>",PerfilUserUpdateView.as_view(), name="perfil_update"),
+  path("actualizar_perfil/<int:pk>/",PerfilUserUpdateView.as_view(), name="perfil_update"),
+  path("perfil/", PerfilView.as_view(), name="perfil"),
 
 
 
@@ -40,4 +41,5 @@ urlpatterns = [
   path("accounts/logout/", logout_view, name="logout"),
   path("accounts/register/", register_view, name="register"),
 
+  
 ]

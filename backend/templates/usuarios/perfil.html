@@ -1,0 +1,240 @@
+{# templates/usuarios/perfil.html #}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Perfil - Inmobiliaria Conecta</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f8f9fa;
+    }
+    footer {
+      background: #212529;
+      color: #fff;
+      padding: 20px 0;
+    }
+    .card-price {
+      font-size: 1.25rem;
+      font-weight: bold;
+      color: #0d6efd;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="{% url 'home' %}">Inmobiliaria Conecta</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto me-3">
+          <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Propiedades</a></li>
+          {% if user.is_authenticated %}
+            {% if user.tipo_usuario == "ARRENDADOR" %}
+              <li class="nav-item"><a class="nav-link active" href="{% url 'perfil' %}">Mis Inmuebles</a></li>
+            {% elif user.tipo_usuario == "ARRENDATARIO" %}
+              <li class="nav-item"><a class="nav-link active" href="{% url 'perfil' %}">Mis Solicitudes</a></li>
+            {% endif %}
+          {% endif %}
+          <li class="nav-item"><a class="nav-link" href="#">Contacto</a></li>
+        </ul>
+        {% if user.is_authenticated %}
+          <a href="{% url 'logout' %}" class="btn btn-outline-light">Cerrar sesión</a>
+        {% else %}
+          <button class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#loginModal">Login</button>
+        {% endif %}
+      </div>
+    </div>
+  </nav>
+
+  <!-- Contenido principal -->
+  <main class="container py-4">
+
+    <!-- Encabezado perfil -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h2 class="mb-0">{{ user.get_full_name|default:user.username }}</h2>
+        <small class="text-muted">
+          {{ user.get_username }} · {{ user.tipo_usuario }}
+        </small>
+      </div>
+      {% if user.is_authenticated %}
+      <div>
+        <!-- <a href="{% url 'logout' %}" class="btn btn-outline-danger">
+          <i class="bi bi-box-arrow-right me-1"></i> Cerrar sesión
+        </a> -->
+      </div>
+      {% endif %}
+    </div>
+
+    {# Sección para ARRENDATARIOS #}
+    {% if user.tipo_usuario == "ARRENDATARIO" %}
+      <h4 class="mt-4 fw-bold">Mis solicitudes enviadas</h4>
+      {% if enviadas %}
+        <div class="row g-4 mt-2">
+          {% for s in enviadas %}
+            <div class="col-md-6">
+              <div class="card h-100 shadow-sm border-0">
+                <div class="card-body">
+                  <h5 class="card-title mb-1">{{ s.inmueble.nombre }}</h5>
+                  <small class="text-muted">
+                    {{ s.inmueble.comuna.nombre }} · {{ s.inmueble.get_tipo_de_inmueble_display }}
+                  </small>
+                  <p class="mt-3 mb-2">{{ s.mensaje|default:"(sin mensaje)" }}</p>
+                  <span class="badge bg-{% if s.estado == "A" %}success{% elif s.estado == "R" %}danger{% else %}secondary{% endif %}">
+                    {{ s.get_estado_display }}
+                  </span>
+                </div>
+                <div class="card-footer bg-white">
+                  <small class="text-muted">
+                    Enviada: {{ s.creado|date:"d/m/Y H:i" }}
+                  </small>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="alert alert-info mt-3">Aún no envías solicitudes.</div>
+      {% endif %}
+    {% endif %}
+
+    {# Sección para ARRENDADORES #}
+    {% if user.tipo_usuario == "ARRENDADOR" %}
+      <h4 class="mt-4 fw-bold">Solicitudes recibidas (mis inmuebles)</h4>
+      {% if recibidas %}
+        <div class="table-responsive mt-3">
+          <table class="table table-hover align-middle shadow-sm">
+            <thead class="table-light">
+              <tr>
+                <th>Inmueble</th>
+                <th>Arrendatario</th>
+                <th>Mensaje</th>
+                <th>Estado</th>
+                <th>Fecha</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for s in recibidas %}
+                <tr>
+                  <td>
+                    <strong>{{ s.inmueble.nombre }}</strong><br>
+                    <small class="text-muted">
+                      {{ s.inmueble.comuna.nombre }} · {{ s.inmueble.get_tipo_de_inmueble_display }}
+                    </small>
+                  </td>
+                  <td>{{ s.arrendatario.get_full_name|default:s.arrendatario.username }}</td>
+                  <td>{{ s.mensaje|default:"(sin mensaje)" }}</td>
+                  <td>
+                    <span class="badge bg-{% if s.estado == "A" %}success{% elif s.estado == "R" %}danger{% else %}secondary{% endif %}">
+                      {{ s.get_estado_display }}
+                    </span>
+                  </td>
+                  <td><small>{{ s.creado|date:"d/m/Y H:i" }}</small></td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="alert alert-info mt-3">Aún no recibes solicitudes.</div>
+      {% endif %}
+
+      <h4 class="mt-5 fw-bold">Mis inmuebles publicados</h4>
+      {% if inmuebles %}
+        <div class="table-responsive mt-3">
+          <table class="table table-hover align-middle shadow-sm">
+            <thead class="table-light">
+              <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for i in inmuebles %}
+                <tr>
+                  <td>{{ i.id }}</td>
+                  <td>{{ i.nombre }}</td>
+                  <td>
+                    <a href="{% url 'inmueble_detail' i.id %}" class="btn btn-sm btn-outline-primary">
+                      Ver
+                    </a>
+                    <a href="{% url 'inmueble_update' i.id %}" class="btn btn-sm btn-outline-secondary">
+                      Editar
+                    </a>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="alert alert-info mt-3">No tienes inmuebles publicados.</div>
+      {% endif %}
+    {% endif %}
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container text-center">
+      <p class="mb-0">© 2025 Inmobiliaria Conecta. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
+  <!-- Modal Login -->
+  <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title fw-bold" id="loginModalLabel">Iniciar Sesión</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <form method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="email" class="form-label">Correo electrónico</label>
+              <input type="email" class="form-control" id="email" name="username" placeholder="ejemplo@correo.com" required>
+            </div>
+            <div class="mb-3">
+              <label for="password" class="form-label">Contraseña</label>
+              <input type="password" class="form-control" id="password" name="password" placeholder="********" required>
+            </div>
+            <div class="mb-3 form-check">
+              <input type="checkbox" class="form-check-input" id="remember">
+              <label class="form-check-label" for="remember">Recordarme</label>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Ingresar</button>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <small class="text-muted">¿No tienes cuenta? <a href="{% url 'register' %}">Regístrate</a></small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
+<!-- <span class="badge bg-{% if s.estado == "A" %}success{% elif s.estado == "R" %}danger{% else %}secondary{% endif %}"></span> -->

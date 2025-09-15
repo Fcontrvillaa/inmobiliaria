@@ -10,14 +10,14 @@ class Region(models.Model):
     nombre = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
-        return f"{self.nombre} ||| numero de region es: {self.nro_region}"   # Valparasio ||| numero de regios es : V
+        return f"{self.nombre} -- region numero: {self.nro_region}"   # Valparasio ||| numero de regios es : V
 
 class Comuna(models.Model):
     nombre = models.CharField(max_length=50)
     region = models.ForeignKey(Region, on_delete=models.CASCADE, related_name="comunas")
 
     def __str__(self):
-        return f"{self.nombre} ||| numero de comuna es: {self.region}"   # valparaiso ||| numero de region es : valparaiso
+        return f"{self.nombre} -- comuna numero: {self.region}"   # valparaiso ||| numero de region es : valparaiso
     
 
 

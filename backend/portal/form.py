@@ -48,8 +48,7 @@ class SolicitudArriendoForm(forms.ModelForm):
 class PerfilUserForm(forms.ModelForm):
     class Meta:
         model = PerfilUser
-        fields = ["tipo_usuario", "rut", "password"] 
-    
+        fields = ["first_name", "last_name", "email", "rut", "imagen", "tipo_usuario"]
 
 
 #################################################

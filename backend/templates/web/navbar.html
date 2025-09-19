@@ -1,0 +1,34 @@
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+        <a class="navbar-brand fw-bold" href="#">Inmobiliaria Conecta</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto me-3">
+            <li class="nav-item"><a class="nav-link active" href="{% url 'home' %}">Inicio</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'home' %}#propiedades">Propiedades</a></li>
+            <!-- 
+            <li class="nav-item"><a class="nav-link" href="{% url 'perfil' %}">Arrendadores</a></li>-->
+            <li class="nav-item"><a class="nav-link" href="{% url 'perfil' %}">Perfil</a></li> 
+            
+            <li class="nav-item"><a class="nav-link" href="#">Contacto</a></li>
+            
+            </ul>
+            
+            
+        </div>
+        {% if user.is_authenticated %}
+            <p class="text-white my-auto mb-0">
+                Bienvenido, {{ user.get_full_name|default:user.username }}
+                
+                <a href="{% url 'logout' %}" class="btn btn-sm btn-outline-light ms-2">Logout</a>
+                
+            </p>
+        {% else %}
+            <!-- Botón que abre el modal -->
+            <p class="text-white my-auto mb-0">Hola, visitante. <button class="btn btn-sm btn-outline-light ms-2" data-bs-toggle="modal" data-bs-target="#loginModal">Login</button></p>
+        {% endif %}
+        </div>
+    </nav>

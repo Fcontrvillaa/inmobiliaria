@@ -100,43 +100,7 @@
 </head>
 <body>
 
-     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-        <a class="navbar-brand fw-bold" href="#">Inmobiliaria Conecta</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto me-3">
-            <li class="nav-item"><a class="nav-link active" href="{% url 'home' %}">Inicio</a></li>
-            <li class="nav-item"><a class="nav-link" href="#propiedades">Propiedades</a></li>
-            <!-- 
-            <li class="nav-item"><a class="nav-link" href="{% url 'perfil' %}">Arrendadores</a></li>-->
-            <li class="nav-item"><a class="nav-link" href="{% url 'perfil' %}">Perfil</a></li> 
-            
-            <li class="nav-item"><a class="nav-link" href="#">Contacto</a></li>
-            
-            </ul>
-            
-            
-        </div>
-        {% if user.is_authenticated %}
-            <p class="text-white my-auto mb-0">
-                Bienvenido, {{ user.get_full_name|default:user.username }}
-                
-                <a href="{% url 'logout' %}" class="btn btn-sm btn-outline-light ms-2">Logout</a>
-                
-            </p>
-        {% else %}
-            <!-- Botón que abre el modal -->
-            <p class="text-white my-auto mb-0">Hola, visitante. <button class="btn btn-sm btn-outline-light ms-2" data-bs-toggle="modal" data-bs-target="#loginModal">Login</button></p>
-        {% endif %}
-        </div>
-    </nav>
-
-  
-
+ {% include 'web/navbar.html' %}
 
 
 
@@ -197,7 +161,11 @@
                   <li><strong>Estacionamiento:</strong> {{i.estacionamientos}}</li>
                 </ul>
                 <p class="card-price">${{i.precio_mensual}} / mes</p>
-                <a href="{% url 'solicitud_create_for_inmueble' inmueble_pk=i.id %}" class="btn btn-outline-primary w-100">Solicitar Arrendamiento</a>
+                {% if user.is_authenticated and user == i.propietario %}
+                  <a href="#" class="btn btn-outline-secondary w-100 disabled" aria-disabled="true">Es tu propiedad</a>
+                {% else %}
+                  <a href="{% url 'solicitud_create_for_inmueble' inmueble_pk=i.id %}" class="btn btn-outline-primary w-100">Solicitar Arrendamiento</a>
+                {% endif %}
               </div>
             </div>
           </div>
@@ -206,11 +174,7 @@
     </div>
   </section>
 
-  <footer>
-    <div class="container text-center">
-      <p class="mb-0">© 2025 Inmobiliaria Conecta. Todos los derechos reservados.</p>
-    </div>
-  </footer>
+  {% include 'web/footer.html' %}
 
   <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">

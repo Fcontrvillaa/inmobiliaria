@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView, CreateView, TemplateView, UpdateView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from .models import Inmueble, SolicitudArriendo
 from .form import RegisterForm, LoginForm, PerfilUserForm, SolicitudArriendoForm
@@ -47,7 +48,7 @@ def logout_view(request):
     return redirect("home")
 
 # PERFIL (muestra enviadas/recibidas y botón a CRUD de inmuebles)
-class PerfilView(TemplateView):
+class PerfilView(LoginRequiredMixin, TemplateView):
     template_name = "usuarios/perfil.html"
 
     def get_context_data(self, **kwargs):
@@ -61,14 +62,14 @@ class PerfilView(TemplateView):
         ctx["inmuebles"] = u.inmuebles.order_by("-creado")
         return ctx
 
-class PerfilEditView(UpdateView):
+class PerfilEditView(LoginRequiredMixin, UpdateView):
     form_class = PerfilUserForm
     template_name = "usuarios/perfil_form.html"
     success_url = reverse_lazy("perfil")
     def get_object(self, queryset=None): return self.request.user
 
 # CREAR SOLICITUD (muestra datos del inmueble)
-class SolicitudArriendoCreateView(CreateView):
+class SolicitudArriendoCreateView(LoginRequiredMixin, CreateView):
     model = SolicitudArriendo
     form_class = SolicitudArriendoForm
     template_name = "inmuebles/solicitud_form.html"
@@ -76,6 +77,9 @@ class SolicitudArriendoCreateView(CreateView):
 
     def dispatch(self, request, *args, **kwargs):
         self.inmueble = get_object_or_404(Inmueble, pk=kwargs["inmueble_pk"])
+        if self.inmueble.propietario == request.user:
+            messages.error(request, "No puedes arrendar tu propia propiedad.")
+            return redirect("home")
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
